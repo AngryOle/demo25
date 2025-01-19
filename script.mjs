@@ -39,6 +39,13 @@ function getRandomQuote(req, res) {
 
 server.get("/tmp/quote", getRandomQuote);
 
+server.post("/tmp/sum/a/b", (req, res) => {
+    const a = 31;
+    const b = 80;
+    const sum = a + b;
+
+    res.status(HTTP_CODES.SUCCESS.OK).send(`The sum of ${a} and ${b} is ${sum}`).end();
+});
 
 server.listen(server.get('port'), function () {
     console.log('server running', server.get('port'));
