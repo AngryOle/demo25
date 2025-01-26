@@ -1,0 +1,52 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin: 0;
+    padding: 20px;
+}
+
+button {
+    margin: 10px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.card {
+    margin: 20px auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    display: inline-block;
+    text-align: center;
+    width: 150px;
+    background: #f9f9f9;
+}
+
+#usedCardsContainer {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+.used-card {
+    width: 90px;
+    height: 140px;
+    background-color: lightgray;
+    margin: 5px;
+    display: inline-block;
+}
+
+.card-placeholder {
+    width: 90px;
+    height: 140px;
+    background-color: #ccc;
+    margin: 5px;
+    display: inline-block;
+}
+
+.error {
+    color: red;
+    margin-top: 10px;
+}
+
