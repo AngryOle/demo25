@@ -1,5 +1,7 @@
 import express from 'express'
+import session from 'express-session';
 import HTTP_CODES from './utils/httpCodes.mjs';
+import FileStore from 'session-file-store';
 
 const server = express();
 const port = process.env.PORT || 8000;
@@ -9,6 +11,20 @@ let decks = {};
 server.set('port', port);
 server.use(express.json());
 server.use(express.static('public'));
+
+const FileStoreInstance = FileStore(session);
+server.use(session({
+    store: new FileStoreInstance({ path: './sessions', logFn: function() {} }),
+    secret: '4f8c0d8f1a2b3c4d5e6f7g8h9i0j1k2l3m4n5o6p7q8r9s0t1u2v3w4x5y6z7a8b9c0d', 
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: false, maxAge: 1000 * 60 * 60 }
+}));
+
+server.use((req, res, next) => {
+    console.log('Session:', req.session);
+    next();
+});
 
 // Root route
 function getRoot(req, res, next) {
@@ -55,13 +71,17 @@ server.post("/tmp/sum/a/b", (req, res) => {
 
 // Deck creation route (single POST /temp/deck)
 server.post('/temp/deck', (req, res) => {
-    const deckId = Math.random().toString(36).substr(2, 9);  
+    const deckId = Math.random().toString(36).substr(2, 9);
     const deck = {
         deckId,
-        cards: generateDeck(), 
-        usedCards: [] 
+        cards: generateDeck(),
+        usedCards: []
     };
-    decks[deckId] = deck;  
+
+    // Saves deckId in session
+    req.session.deckId = deckId; 
+    decks[deckId] = deck;
+
     res.status(HTTP_CODES.SUCCESS.OK).json({ deckId });
 });
 
@@ -84,6 +104,22 @@ server.get('/temp/deck/:deckId', (req, res) => {
         res.status(HTTP_CODES.SUCCESS.OK).json(deck);
     } else {
         res.status(HTTP_CODES.ERROR.NOT_FOUND).send('Deck not found');
+    }
+});
+
+server.get('/temp/deck/session/card', (req, res) => {
+    const deckId = req.session.deckId;
+    if (!deckId || !decks[deckId]) {
+        return res.status(HTTP_CODES.ERROR.NOT_FOUND).send('No deck found in session');
+    }
+
+    const deck = decks[deckId];
+    if (deck.cards.length > 0) {
+        const card = deck.cards.pop();
+        deck.usedCards.push(card);
+        res.status(HTTP_CODES.SUCCESS.OK).json(card);
+    } else {
+        res.status(HTTP_CODES.ERROR.NOT_FOUND).send('No cards left');
     }
 });
 
