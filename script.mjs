@@ -2,11 +2,14 @@ import express from 'express'
 import session from 'express-session';
 import HTTP_CODES from './utils/httpCodes.mjs';
 import FileStore from 'session-file-store';
+import BlackjackTrie from './backend/blackjack.mjs';
 
 const server = express();
 const port = process.env.PORT || 8000;
 
 let decks = {};
+
+const blackjackTrie = new BlackjackTrie();
 
 server.set('port', port);
 server.use(express.json());
@@ -155,6 +158,33 @@ function shuffle(array) {
     }
     return array;
 }
+
+// Blackjack
+app.post('/blackjack', (req, res) => {
+    const { playerName, gameState } = req.body;
+    if (!playerName || !gameState) {
+        return res.status(400).json({ error: "Player name and game state required" });
+    }
+    blackjackTrie.insert(playerName, gameState);
+    res.status(201).json({ message: `Blackjack game started for ${playerName}` });
+});
+
+// status
+app.get('/blackjack/:playerName', (req, res) => {
+    const gameState = blackjackTrie.search(req.params.playerName);
+    if (!gameState) return res.status(404).json({ error: "Game not found" });
+    res.json(gameState);
+});
+
+// delete session
+app.delete('/blackjack/:playerName', (req, res) => {
+    blackjackTrie.delete(req.params.playerName);
+    res.json({ message: `Game for ${req.params.playerName} deleted` });
+});
+
+app.listen(port, () => {
+    console.log(`Blackjack server running on port ${port}`);
+});
 
 server.listen(server.get('port'), function () {
     console.log('Server running on port', server.get('port'));
