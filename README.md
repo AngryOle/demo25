@@ -1,7 +1,7 @@
 # Express web server prosjekt
 
 ## RENDER URL
-https://dashboard.render.com/web/srv-cutp3d2j1k6c738eqrj0
+https://demo25-ole.onrender.com/
 
 ## FUNKSJONER:
 ### GET / - Returnerer "Hello World"
