@@ -7,6 +7,30 @@ const dealerCardsDiv = document.getElementById("dealer-cards");
 const playerCardsDiv = document.getElementById("player-cards");
 const gameMessage = document.getElementById("game-message");
 const betMessage = document.getElementById("bet-message");
+const playerCreditsDisplay = document.getElementById("player-credits");
+
+async function fetchCredits() {
+    const storedCredits = localStorage.getItem("userCredits");
+    if (storedCredits) {
+        playerCreditsDisplay.textContent = storedCredits;
+    } else {
+        playerCreditsDisplay.textContent = "Loading...";
+    }
+
+    try {
+        const response = await fetch("/user/session", { credentials: "include" });
+        const data = await response.json();
+
+        if (response.ok) {
+            playerCreditsDisplay.textContent = data.credits;
+            localStorage.setItem("userCredits", data.credits);
+        } else {
+            playerCreditsDisplay.textContent = "Error loading credits";
+        }
+    } catch (error) {
+        playerCreditsDisplay.textContent = "Error loading credits";
+    }
+}
 
 let sessionId = null;
 let betAmount = 0;
@@ -19,6 +43,9 @@ confirmBetBtn.addEventListener("click", () => {
     }
     betMessage.textContent = `Bet confirmed: ${betAmount} credits. Click "Start Game" to begin!`;
     startGameBtn.disabled = false;
+    const currentCredits = parseInt(playerCreditsDisplay.textContent, 10);
+    playerCreditsDisplay.textContent = currentCredits - betAmount;
+    localStorage.setItem("userCredits", currentCredits - betAmount);
 });
 
 async function startGame() {
@@ -97,6 +124,11 @@ function updateUI(gameState) {
 
     gameMessage.textContent = gameState.message;
 
+    if (gameState.credits !== undefined) {
+        playerCreditsDisplay.textContent = gameState.credits;
+        localStorage.setItem("userCredits", gameState.credits);
+    }
+
     if (gameState.gameOver) {
         hitBtn.disabled = true;
         standBtn.disabled = true;
@@ -112,5 +144,6 @@ function getSuitSymbol(suit) {
 }
 
 startGameBtn.addEventListener("click", startGame);
+document.addEventListener("DOMContentLoaded", fetchCredits);
 hitBtn.addEventListener("click", hit);
 standBtn.addEventListener("click", stand);

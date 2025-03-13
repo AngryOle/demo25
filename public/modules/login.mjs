@@ -23,9 +23,17 @@ loginButton.addEventListener("click", async () => {
         const data = await response.json();
 
         if (response.ok) {
-            loginMessage.textContent = "Login successful! Redirecting...";
+            loginMessage.textContent = "Login successful! Fetching user data...";
+            
+            const sessionResponse = await fetch("/user/session", { credentials: "include" });
+            const sessionData = await sessionResponse.json();
+        
+            if (sessionResponse.ok) {
+                localStorage.setItem("userCredits", sessionData.credits); //local storage
+            }
+        
             setTimeout(() => {
-                window.location.href = "blackjack.html"; // GOTO GAME
+                window.location.href = "blackjack.html";
             }, 1500);
         } else {
             loginMessage.textContent = data.error || "Login failed.";

@@ -125,7 +125,11 @@ blackjackRouter.put("/stand/:sessionId", async (req, res) => {
 
         await pool.query("UPDATE blackjack_sessions SET game_state = $1 WHERE id = $2", [JSON.stringify(gameState), sessionId]);
 
+        const updatedUser = await pool.query("SELECT credits FROM users WHERE id = $1", [userId]);
+        gameState.credits = updatedUser.rows[0].credits;
+
         res.status(HTTP_CODES.SUCCESS.OK).json(gameState);
+        
     } catch (error) {
         console.error("Error processing Blackjack stand:", error);
         res.status(HTTP_CODES.SERVER_ERROR.INTERNAL_SERVER_ERROR).json({ error: "Failed to process stand." });
