@@ -6,7 +6,7 @@ const errorMessage = document.getElementById('error-message');
 
 let currentDeckId = null;
 
-// API CALL
+// API CALL (Refactored)
 async function apiRequest(method, url) {
     try {
         const response = await fetch(url, { method });
@@ -26,7 +26,7 @@ createDeckButton.addEventListener('click', async () => {
     errorMessage.textContent = '';
     cardDisplay.textContent = '';
     try {
-        const result = await apiRequest('POST', '/temp/deck');
+        const result = await apiRequest('POST', '/deck');
         currentDeckId = result.deck_id;
         errorMessage.textContent = `Deck created with ID: ${currentDeckId}`;
         shuffleDeckButton.disabled = false;
@@ -40,10 +40,10 @@ createDeckButton.addEventListener('click', async () => {
 shuffleDeckButton.addEventListener('click', async () => {
     errorMessage.textContent = '';
     try {
-        await apiRequest('PATCH', `/temp/deck/shuffle/${currentDeckId}`);
+        await apiRequest('PATCH', `/deck/shuffle/${currentDeckId}`);
         errorMessage.textContent = 'Deck shuffled successfully!';
     } catch {
-        errorMessage.textContent = 'Failed to shuffle deck. .';
+        errorMessage.textContent = 'Failed to shuffle deck.';
     }
 });
 
@@ -52,7 +52,7 @@ drawCardButton.addEventListener('click', async () => {
     errorMessage.textContent = '';
     cardDisplay.textContent = '';
     try {
-        const card = await apiRequest('GET', `/temp/deck/${currentDeckId}/card`);
+        const card = await apiRequest('GET', `/deck/${currentDeckId}/card`);
         const { suit, value } = card;
         cardDisplay.innerHTML = `
             <div class="card">
@@ -62,6 +62,6 @@ drawCardButton.addEventListener('click', async () => {
             </div>
         `;
     } catch {
-        errorMessage.textContent = 'Failed to draw a card. . .';
+        errorMessage.textContent = 'Failed to draw a card.';
     }
 });

@@ -3,19 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Card Game</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Card Games</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <h1>Deck of Cards</h1>
-    <div id="output"></div>
-    <div id="cardContainer"></div> 
-    <div id="usedCardsContainer"></div> 
+    <header>
+        <h1>Welcome to the Card Game Hub!!</h1>
+        <nav>
+            <button id="home-button">Home</button>
+            <button id="blackjack-button">Blackjack</button>
+            <button id="deck-button">Deck Game</button>
+            <button id="poem-button">Poem</button>
+        </nav>
+    </header>
 
-    <button id="createDeckButton">Create Deck</button>
-    <button id="drawCardButton">Draw Card</button>
-    <button id="shuffleDeckButton">Shuffle Deck</button>
+    <div id="template-container">
+        <!-- Content here -->
+    </div>
 
-    <script src="app.mjs" type="module"></script>
+    <script src="modules/app.mjs" type="module"></script>
 </body>
 </html>
