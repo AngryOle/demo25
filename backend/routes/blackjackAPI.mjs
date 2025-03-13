@@ -4,19 +4,37 @@ import HTTP_CODES from "../utils/httpCodes.mjs";
 
 const blackjackRouter = express.Router();
 
-// Start a new Blackjack game
+// Start game
 blackjackRouter.post("/start", async (req, res) => {
     try {
+        const { bet } = req.body;
+        if (!bet || bet <= 0) {
+            return res.status(HTTP_CODES.CLIENT_ERROR.BAD_REQUEST).json({ error: "Invalid bet amount." });
+        }
+
+        // Get credits
+        const userResult = await pool.query("SELECT credits FROM users WHERE id = $1", [req.session.userId]);
+        if (userResult.rows.length === 0) {
+            return res.status(HTTP_CODES.CLIENT_ERROR.UNAUTHORIZED).json({ error: "User not found." });
+        }
+        
+        const userCredits = userResult.rows[0].credits;
+        if (bet > userCredits) {
+            return res.status(HTTP_CODES.CLIENT_ERROR.BAD_REQUEST).json({ error: "Not enough credits." });
+        }
+
+        await pool.query("UPDATE users SET credits = credits - $1 WHERE id = $2", [bet, req.session.userId]);
+
         const gameState = {
             playerCards: [drawCard(), drawCard()],
             dealerCards: [drawCard()],
             gameOver: false,
-            message: "Game started! Draw your first card."
+            message: "Game started! Place your bet."
         };
 
         const result = await pool.query(
-            "INSERT INTO blackjack_sessions (user_id, game_state) VALUES ($1, $2) RETURNING id",
-            [req.session.userId || null, JSON.stringify(gameState)]
+            "INSERT INTO blackjack_sessions (user_id, game_state, bet_amount) VALUES ($1, $2, $3) RETURNING id",
+            [req.session.userId, JSON.stringify(gameState), bet]
         );
 
         res.status(HTTP_CODES.SUCCESS.CREATED).json({ sessionId: result.rows[0].id, gameState });
@@ -26,7 +44,7 @@ blackjackRouter.post("/start", async (req, res) => {
     }
 });
 
-// Player draws a card (Hit)
+// Hit
 blackjackRouter.put("/play/:sessionId", async (req, res) => {
     try {
         const { sessionId } = req.params;
@@ -43,7 +61,6 @@ blackjackRouter.put("/play/:sessionId", async (req, res) => {
 
         gameState.playerCards.push(drawCard());
 
-        // Check if the player busted (total over 21)
         if (calculateTotal(gameState.playerCards) > 21) {
             gameState.gameOver = true;
             gameState.message = "You busted! Dealer wins.";
@@ -60,11 +77,11 @@ blackjackRouter.put("/play/:sessionId", async (req, res) => {
     }
 });
 
-// Player stands (Dealer plays)
+// Stand (dealer play)
 blackjackRouter.put("/stand/:sessionId", async (req, res) => {
     try {
         const { sessionId } = req.params;
-        const result = await pool.query("SELECT game_state FROM blackjack_sessions WHERE id = $1", [sessionId]);
+        const result = await pool.query("SELECT user_id, game_state, bet_amount FROM blackjack_sessions WHERE id = $1", [sessionId]);
 
         if (result.rows.length === 0) {
             return res.status(HTTP_CODES.CLIENT_ERROR.NOT_FOUND).json({ error: "Game session not found." });
@@ -75,7 +92,10 @@ blackjackRouter.put("/stand/:sessionId", async (req, res) => {
             return res.status(HTTP_CODES.CLIENT_ERROR.BAD_REQUEST).json({ error: "Game is already over." });
         }
 
-        // Dealer keeps drawing until 17+
+        const betAmount = result.rows[0].bet_amount;
+        const userId = result.rows[0].user_id;
+
+        // Dealer plays until 17+
         while (calculateTotal(gameState.dealerCards) < 17) {
             gameState.dealerCards.push(drawCard());
         }
@@ -84,12 +104,20 @@ blackjackRouter.put("/stand/:sessionId", async (req, res) => {
         const dealerTotal = calculateTotal(gameState.dealerCards);
 
         gameState.gameOver = true;
+        let payout = 0;
+
         if (dealerTotal > 21 || playerTotal > dealerTotal) {
-            gameState.message = "You win!";
+            gameState.message = "Winrar!";
+            payout = betAmount * 2;
         } else if (playerTotal < dealerTotal) {
             gameState.message = "Dealer wins!";
         } else {
-            gameState.message = "It's a tie!";
+            gameState.message = "Tie!";
+            payout = betAmount; //refund
+        }
+
+        if (payout > 0) {
+            await pool.query("UPDATE users SET credits = credits + $1 WHERE id = $2", [payout, userId]);
         }
 
         await pool.query("UPDATE blackjack_sessions SET game_state = $1 WHERE id = $2", [JSON.stringify(gameState), sessionId]);
@@ -101,7 +129,6 @@ blackjackRouter.put("/stand/:sessionId", async (req, res) => {
     }
 });
 
-// Get a Blackjack game session
 blackjackRouter.get("/:sessionId", async (req, res) => {
     try {
         const { sessionId } = req.params;
@@ -118,7 +145,6 @@ blackjackRouter.get("/:sessionId", async (req, res) => {
     }
 });
 
-// Delete a Blackjack game session
 blackjackRouter.delete("/:sessionId", async (req, res) => {
     try {
         const { sessionId } = req.params;

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Blackjack Game</title>
     <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Nunito:wght@300;400;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <h1>Blackjack</h1>
@@ -14,7 +15,7 @@
             <h2>Dealer</h2>
             <div id="dealer-cards"></div>
         </div>
-
+    
         <div id="player">
             <h2>Player</h2>
             <div id="player-cards"></div>
@@ -24,6 +25,11 @@
     <button id="start-game">Start Game</button>
     <button id="hit" disabled>Hit</button>
     <button id="stand" disabled>Stand</button>
+    
+    <label for="bet-amount">Bet:</label>
+    <input type="number" id="bet-amount" min="1" value="100">
+    <button id="confirm-bet">Confirm Bet</button>
+    <p id="bet-message"></p>
 
     <p id="game-message"></p>
 

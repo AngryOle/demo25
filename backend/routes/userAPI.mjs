@@ -14,7 +14,7 @@ userRouter.post("/register", async (req, res) => {
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
-        await pool.query("INSERT INTO users (username, password) VALUES ($1, $2)", [username, hashedPassword]);
+        await pool.query("INSERT INTO users (username, password, credits) VALUES ($1, $2, 10000)", [username, hashedPassword]);
 
         res.status(HTTP_CODES.SUCCESS.CREATED).json({ message: "User registered successfully!" });
     } catch (error) {
