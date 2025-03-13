@@ -7,6 +7,9 @@ const blackjackRouter = express.Router();
 // Start game
 blackjackRouter.post("/start", async (req, res) => {
     try {
+        if (!req.session.userId) {
+            return res.status(HTTP_CODES.CLIENT_ERROR.UNAUTHORIZED).json({ error: "You must be logged in to play." });
+        }
         const { bet } = req.body;
         if (!bet || bet <= 0) {
             return res.status(HTTP_CODES.CLIENT_ERROR.BAD_REQUEST).json({ error: "Invalid bet amount." });
