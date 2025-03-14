@@ -19,11 +19,17 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
     session({
-        store: new FileStore({ path: "./sessions" }),
+        store: new FileStore({
+            path: "./sessions",
+            retries: 0,
+            ttl: 3600,
+            reapInterval: 600,
+            fallbackSessionFn: () => ({})
+        }),
         secret: "supersecretkey",
         resave: false,
-        saveUninitialized: true,
-        cookie: { secure: false }
+        saveUninitialized: false,
+        cookie: { secure: false, maxAge: 1000 * 60 * 60 }
     })
 );
 app.use(express.static(path.join(__dirname, "public")));

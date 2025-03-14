@@ -5,7 +5,7 @@ import HTTP_CODES from "../utils/httpCodes.mjs";
 
 const userRouter = express.Router();
 
-// Register a new user
+// Register
 userRouter.post("/register", async (req, res) => {
     try {
         const { username, password } = req.body;
@@ -26,7 +26,7 @@ userRouter.post("/register", async (req, res) => {
     }
 });
 
-// User login
+// Login
 userRouter.post("/login", async (req, res) => {
     try {
         const { username, password } = req.body;
@@ -53,7 +53,6 @@ userRouter.post("/login", async (req, res) => {
     }
 });
 
-// Get current user session
 userRouter.get("/session", async (req, res) => {
     if (!req.session.userId) {
         return res.status(HTTP_CODES.CLIENT_ERROR.UNAUTHORIZED).json({ error: "Not logged in." });
@@ -72,7 +71,7 @@ userRouter.get("/session", async (req, res) => {
     }
 });
 
-// Logout user
+// Logout
 userRouter.post("/logout", (req, res) => {
     req.session.destroy(err => {
         if (err) {
