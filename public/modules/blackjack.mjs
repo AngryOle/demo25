@@ -41,8 +41,16 @@ confirmBetBtn.addEventListener("click", () => {
         betMessage.textContent = "Please enter a valid bet amount!";
         return;
     }
+    if (betAmount <= 0 || isNaN(betAmount)) {
+        betMessage.textContent = "Please enter a valid bet amount!";
+        startGameBtn.disabled = true;
+        return;
+    }
+    
     betMessage.textContent = `Bet confirmed: ${betAmount} credits. Click "Start Game" to begin!`;
-    startGameBtn.disabled = false;
+    startGameBtn.disabled = false;  
+    confirmBetBtn.disabled = true;  
+    betInput.disabled = true;
     const currentCredits = parseInt(playerCreditsDisplay.textContent, 10);
     playerCreditsDisplay.textContent = currentCredits - betAmount;
     localStorage.setItem("userCredits", currentCredits - betAmount);
@@ -132,9 +140,10 @@ function updateUI(gameState) {
     if (gameState.gameOver) {
         hitBtn.disabled = true;
         standBtn.disabled = true;
-        startGameBtn.disabled = false;
+        startGameBtn.disabled = true; 
         confirmBetBtn.disabled = false;
         betInput.disabled = false;
+        betMessage.textContent = "Please confirm your new bet before starting!";
     }
 }
 
