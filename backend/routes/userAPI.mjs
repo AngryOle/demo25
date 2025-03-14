@@ -54,11 +54,22 @@ userRouter.post("/login", async (req, res) => {
 });
 
 // Get current user session
-userRouter.get("/session", (req, res) => {
+userRouter.get("/session", async (req, res) => {
     if (!req.session.userId) {
         return res.status(HTTP_CODES.CLIENT_ERROR.UNAUTHORIZED).json({ error: "Not logged in." });
     }
-    res.status(HTTP_CODES.SUCCESS.OK).json({ userId: req.session.userId });
+
+    try {
+        const result = await pool.query("SELECT username, credits FROM users WHERE id = $1", [req.session.userId]);
+        if (result.rows.length === 0) {
+            return res.status(HTTP_CODES.CLIENT_ERROR.NOT_FOUND).json({ error: "User not found." });
+        }
+
+        const user = result.rows[0];
+        res.status(HTTP_CODES.SUCCESS.OK).json({ username: user.username, credits: user.credits });
+    } catch (error) {
+        res.status(HTTP_CODES.SERVER_ERROR.INTERNAL_SERVER_ERROR).json({ error: "Failed to fetch user profile." });
+    }
 });
 
 // Logout user

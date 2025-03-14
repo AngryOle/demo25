@@ -129,7 +129,7 @@ blackjackRouter.put("/stand/:sessionId", async (req, res) => {
         gameState.credits = updatedUser.rows[0].credits;
 
         res.status(HTTP_CODES.SUCCESS.OK).json(gameState);
-        
+
     } catch (error) {
         console.error("Error processing Blackjack stand:", error);
         res.status(HTTP_CODES.SERVER_ERROR.INTERNAL_SERVER_ERROR).json({ error: "Failed to process stand." });
@@ -161,6 +161,26 @@ blackjackRouter.delete("/:sessionId", async (req, res) => {
     } catch (error) {
         console.error("Error deleting Blackjack session:", error);
         res.status(HTTP_CODES.SERVER_ERROR.INTERNAL_SERVER_ERROR).json({ error: "Failed to delete session." });
+    }
+});
+
+blackjackRouter.get("/history", async (req, res) => {
+    if (!req.session.userId) {
+        return res.status(HTTP_CODES.CLIENT_ERROR.UNAUTHORIZED).json({ error: "Not logged in." });
+    }
+
+    try {
+        const result = await pool.query("SELECT id, bet_amount, game_state FROM blackjack_sessions WHERE user_id = $1 ORDER BY id DESC LIMIT 10", [req.session.userId]);
+
+        const gameHistory = result.rows.map(game => ({
+            id: game.id,
+            bet_amount: game.bet_amount,
+            result: game.game_state.includes('"You win!"') ? "Win" : game.game_state.includes('"Dealer wins!"') ? "Loss" : "Tie"
+        }));
+
+        res.status(HTTP_CODES.SUCCESS.OK).json(gameHistory);
+    } catch (error) {
+        res.status(HTTP_CODES.SERVER_ERROR.INTERNAL_SERVER_ERROR).json({ error: "Failed to fetch game history." });
     }
 });
 
