@@ -8,7 +8,7 @@
 	},
 	"item": [
 		{
-			"name": "Hello World",
+			"name": "Home",
 			"request": {
 				"method": "GET",
 				"header": [],
@@ -68,29 +68,7 @@
 			"response": []
 		},
 		{
-			"name": "Sum av to tall",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:8000/tmp/sum/a/b",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8000",
-					"path": [
-						"tmp",
-						"sum",
-						"a",
-						"b"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "DeckId",
+			"name": "Deck",
 			"request": {
 				"method": "POST",
 				"header": [],
@@ -110,33 +88,12 @@
 			"response": []
 		},
 		{
-			"name": "Hent deck basert på DeckId",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:8000/temp/deck/abc123",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8000",
-					"path": [
-						"temp",
-						"deck",
-						"abc123"
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "Trekker kort basert på deckId",
 			"request": {
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8000/temp/deck/abc123/card",
+					"raw": "http://localhost:8000/temp/deck/{deckId}/card",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -145,7 +102,7 @@
 					"path": [
 						"temp",
 						"deck",
-						"abc123",
+						"{deckId}",
 						"card"
 					]
 				}
@@ -158,7 +115,7 @@
 				"method": "PATCH",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8000/temp/deck/shuffle/:deckId",
+					"raw": "http://localhost:8000/temp/deck/shuffle/{deckId}",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -168,64 +125,141 @@
 						"temp",
 						"deck",
 						"shuffle",
-						":deckId"
-					],
-					"variable": [
-						{
-							"key": "deckId",
-							"value": ""
-						}
+						"{deckId}"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "Blackjack",
+			"name": "Bruker registrering",
 			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"username\": \"testuser\",\r\n  \"password\": \"password123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8000/user/register",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"user",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Bruker login",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"username\": \"testuser\",\r\n  \"password\": \"password123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8000/user/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"user",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Bruker logg ut",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
 				"method": "POST",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8000/blackjack",
+					"raw": "http://localhost:8000/user/logout",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "8000",
 					"path": [
-						"blackjack"
+						"user",
+						"logout"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "Henter blackjack for bestemt spiller",
+			"name": "Hent bruker data",
 			"request": {
+				"auth": {
+					"type": "noauth"
+				},
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8000/blackjack/Alice",
+					"raw": "http://localhost:8000/user/session",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "8000",
 					"path": [
-						"blackjack",
-						"Alice"
+						"user",
+						"session"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "Slette bestemt blackjack spiller",
+			"name": "Blackjack start",
 			"request": {
-				"method": "DELETE",
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \"bet\": 500 }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
-					"raw": "http://localhost:8000/blackjack/Alice",
+					"raw": "http://localhost:8000/blackjack/start",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -233,9 +267,58 @@
 					"port": "8000",
 					"path": [
 						"blackjack",
-						"Alice"
+						"start"
 					]
 				}
+			},
+			"response": []
+		},
+		{
+			"name": "Blackjack hit basert på sessionId",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/blackjack/play/{sessionId}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"blackjack",
+						"play",
+						"{sessionId}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Blackjack stand basert på sessionId",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/blackjack/stand/{sessionId}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"blackjack",
+						"stand",
+						"{sessionId}"
+					]
+				},
+				"description": "Bytt ut sessionId med riktig ID for å teste"
 			},
 			"response": []
 		}
