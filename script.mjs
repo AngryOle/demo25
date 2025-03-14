@@ -3,6 +3,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import session from "express-session";
 import fileStoreFactory from "session-file-store";
+import fs from "fs";
 import blackjackRouter from "./backend/routes/blackjackAPI.mjs";
 import userRouter from "./backend/routes/userAPI.mjs";
 import hashmapRouter from "./backend/routes/hashmapAPI.mjs";
@@ -14,17 +15,24 @@ const app = express();
 const PORT = process.env.PORT || 8000;
 const FileStore = fileStoreFactory(session);
 
+const sessionPath = path.join(__dirname, "sessionStorage");
+if (!fs.existsSync(sessionPath)) {
+    fs.mkdirSync(sessionPath);
+    console.log("Created sessionStorage directory.");
+}
+
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
     session({
         store: new FileStore({
-            path: "./sessions",
+            path: sessionPath, // 🆕 New session storage path
             retries: 0,
             ttl: 3600,
             reapInterval: 600,
-            fallbackSessionFn: () => ({})
+            fallbackSessionFn: () => ({}),
+            logFn: console.log // 🛠️ Logs session activity for debugging
         }),
         secret: "supersecretkey",
         resave: false,
@@ -38,13 +46,12 @@ app.use("/blackjack", blackjackRouter);
 app.use("/user", userRouter);
 app.use("/hashmap", hashmapRouter);
 
-// index.html
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "public/index.html"));
 });
 
 app.get("/tmp/poem", (req, res) => {
-    console.log("Poem route was accessed!"); // Debugging
+    console.log("📜 Poem route accessed!");
     const poem = `
         Roses are red,
         Violets are blue,
@@ -55,6 +62,7 @@ app.get("/tmp/poem", (req, res) => {
 });
 
 app.get("/tmp/quote", (req, res) => {
+    console.log("📜 Quote route accessed!");
     const quotes = [
         "Now and then we had a hope that if we lived and were good, God would permit us to be pirates. - Mark Twain",
         "It's more fun to be a pirate than to join the navy. - Steve Jobs",
@@ -66,16 +74,14 @@ app.get("/tmp/quote", (req, res) => {
     res.type("text/plain").send(randomQuote);
 });
 
-// Errors
 process.on("uncaughtException", (err) => {
-    console.error("Uncaught Exception:", err);
+    console.error("❌ Uncaught Exception:", err);
 });
 
 process.on("unhandledRejection", (reason, promise) => {
-    console.error("Unhandled Rejection at:", promise, "reason:", reason);
+    console.error("❌ Unhandled Rejection at:", promise, "reason:", reason);
 });
 
-// Start server
 app.listen(PORT, () => {
-    console.log(`Server running at http://localhost:${PORT}`);
+    console.log(`🚀 Server running at http://localhost:${PORT}`);
 });
