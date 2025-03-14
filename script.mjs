@@ -45,7 +45,7 @@ app.get("/", (req, res) => {
 
 
 app.get("/tmp/poem", (req, res) => {
-    console.log("📜 Poem route accessed!");
+    console.log("Poem route accessed!");
     const poem = `
         Roses are red,
         Violets are blue,
@@ -57,7 +57,7 @@ app.get("/tmp/poem", (req, res) => {
 
 
 app.get("/tmp/quote", (req, res) => {
-    console.log("📜 Quote route accessed!");
+    console.log("Quote route accessed!");
     const quotes = [
         "Now and then we had a hope that if we lived and were good, God would permit us to be pirates. - Mark Twain",
         "It's more fun to be a pirate than to join the navy. - Steve Jobs",
@@ -71,11 +71,11 @@ app.get("/tmp/quote", (req, res) => {
 
 
 process.on("uncaughtException", (err) => {
-    console.error("❌ Uncaught Exception:", err);
+    console.error("Uncaught Exception:", err);
 });
 
 process.on("unhandledRejection", (reason, promise) => {
-    console.error("❌ Unhandled Rejection at:", promise, "reason:", reason);
+    console.error("Unhandled Rejection at:", promise, "reason:", reason);
 });
 
 
