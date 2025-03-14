@@ -37,6 +37,29 @@ app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "public/index.html"));
 });
 
+app.get("/tmp/poem", (req, res) => {
+    console.log("Poem route was accessed!"); // Debugging
+    const poem = `
+        Roses are red,
+        Violets are blue,
+        These poems are so cheesy,
+        and I think you're grate too.
+    `;
+    res.type("text/plain").send(poem);
+});
+
+app.get("/tmp/quote", (req, res) => {
+    const quotes = [
+        "Now and then we had a hope that if we lived and were good, God would permit us to be pirates. - Mark Twain",
+        "It's more fun to be a pirate than to join the navy. - Steve Jobs",
+        "When a pirate grows rich enough, they make him a prince. - George R R Martin",
+        "Merchant and pirate were for a long period one and the same person. - Friedrich Nietzsche",
+        "There is more treasure in books than in all the pirate's loot on Treasure Island. - Walt Disney"
+    ];
+    const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+    res.type("text/plain").send(randomQuote);
+});
+
 // Errors
 process.on("uncaughtException", (err) => {
     console.error("Uncaught Exception:", err);

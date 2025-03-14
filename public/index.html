@@ -7,26 +7,24 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+    <a href="index.html" class="home-button">Home</a>
+
     <header>
-        <h1>Welcome to the Card Game Hub!!</h1>
-        
-        <a href="register.html"><button>Register</button></a>
-        <a href="login.html"><button>Login</button></a>
-        <a href="profile.html"><button>Profile</button></a>
-        
+        <h1>Welcome to the <span class="rainbow-text">Gambling</span> Hub!</h1>
+
+        <div class="auth-buttons">
+            <a href="register.html"><button>Register</button></a>
+            <a href="login.html"><button>Login</button></a>
+            <a href="profile.html"><button>Profile</button></a>
+        </div>
+
         <nav>
-            <button id="home-button">Home</button>
-            <button id="blackjack-button">Blackjack</button>
-            <button id="deck-button">Deck Game</button>
-            <button id="poem-button">Poem</button>
+            <a href="blackjack.html"><button>Play Blackjack</button></a>
+            <a href="deck.html"><button>Draw a Card</button></a>
+            <a href="poem.html"><button>Read a Poem</button></a>
+            <a href="quote.html"><button>Random Quote</button></a>
         </nav>
     </header>
-
-    <a href="blackjack.html"><button>Play Blackjack</button></a>
-
-    <div id="template-container">
-        <!-- Content here -->
-    </div>
 
     <script src="modules/app.mjs" type="module"></script>
 </body>

@@ -7,6 +7,20 @@ body {
     padding: 20px;
 }
 
+.auth-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+nav {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
 #game-area {
     display: flex;
     flex-direction: column; 
@@ -38,16 +52,6 @@ body {
     color: white;
 }
 
-button {
-    margin: 10px;
-    padding: 10px 20px;
-    font-size: 16px;
-    cursor: pointer;
-}
-
-button:hover {
-    opacity: 0.85;
-}
 
 .card {
     display: inline-block;
@@ -73,6 +77,10 @@ button {
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.3s ease;
+}
+
+button:hover {
+    background-color: #2980b9;
 }
 
 .used-card {
@@ -114,3 +122,16 @@ button {
     background-color: #2980b9;
 }
 
+.rainbow-text {
+    background-image: linear-gradient(90deg, red, orange, yellow, green, cyan, blue, violet);
+    background-size: 200% 100%;
+    font-weight: bold;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: rainbow-animation 3s linear infinite;
+}
+
+@keyframes rainbow-animation {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 200% 50%; }
+}
