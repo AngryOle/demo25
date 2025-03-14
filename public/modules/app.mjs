@@ -115,5 +115,4 @@ document.getElementById("poem-button").addEventListener("click", () => {
     placeTemplate("poem-template.html", "poem.mjs");
 });
 
-// Load default view (Deck Game)
 placeTemplate("deck-template.html", "index.mjs", null, initializeDeckGame);

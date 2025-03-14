@@ -18,7 +18,7 @@ userRouter.post("/register", async (req, res) => {
 
         res.status(HTTP_CODES.SUCCESS.CREATED).json({ message: "User registered successfully!" });
     } catch (error) {
-        if (error.code === '23505') { // PostgreSQL duplicate entry error code
+        if (error.code === '23505') {
             return res.status(HTTP_CODES.CLIENT_ERROR.BAD_REQUEST).json({ error: "Username already exists. Choose another!" });
         }
         console.error("Error registering user:", error);

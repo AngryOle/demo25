@@ -36,21 +36,20 @@ async function stand() {
 function updateUI(gameData) {
     document.getElementById("blackjack-message").innerText = gameData.message;
 
-    // Player
+
     const playerCardsDiv = document.getElementById("player-cards");
     playerCardsDiv.innerHTML = "";
     gameData.playerCards.forEach(card => {
         playerCardsDiv.innerHTML += `<div class="card">${card.value} of ${card.suit}</div>`;
     });
 
-    // Dealer
+
     const dealerCardsDiv = document.getElementById("dealer-cards");
     dealerCardsDiv.innerHTML = "";
     gameData.dealerCards.forEach(card => {
         dealerCardsDiv.innerHTML += `<div class="card">${card.value} of ${card.suit}</div>`;
     });
 
-    // Game over
     if (gameData.gameOver) {
         document.getElementById("hit").disabled = true;
         document.getElementById("stand").disabled = true;
